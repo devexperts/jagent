@@ -4,7 +4,7 @@
 
     <groupId>com.devexperts.jagent</groupId>
     <artifactId>jagent</artifactId>
-    <version>0.1</version>
+    <version>0.2-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>JAgent</name>
@@ -150,7 +150,7 @@
     <scm>
         <connection>scm:git:https://stash.in.devexperts.com/scm/dxsb/jagent.git</connection>
         <developerConnection>scm:git:ssh://git@stash.in.devexperts.com:7999/dxsb/jagent.git</developerConnection>
-        <tag>jagent-0.1</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <distributionManagement>
