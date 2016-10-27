@@ -10,4 +10,13 @@
     <artifactId>jagent-impl</artifactId>
     <name>JAgent Impl</name>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm-commons</artifactId>
+            <version>5.0.2</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
 </project>

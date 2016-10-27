@@ -16,6 +16,7 @@
 
     <properties>
         <agent.artifact.name>sample</agent.artifact.name>
+        <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
 
     <modules>

@@ -1,10 +1,10 @@
-package com.devexperts.jagent.sample;
+package com.devexperts.jagent;
 
 /*
  * #%L
- * Sample Core
+ * JAgent Impl
  * %%
- * Copyright (C) 2015 Devexperts, LLC
+ * Copyright (C) 2015 - 2016 Devexperts, LLC
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,16 +22,22 @@ package com.devexperts.jagent.sample;
  * #L%
  */
 
-import com.devexperts.jagent.InnerJarClassLoader;
-import com.devexperts.jagent.JAgentRunner;
+import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.Opcodes;
 
-import java.lang.instrument.Instrumentation;
+public class ClassInfoVisitor extends ClassVisitor {
+    private ClassInfo classInfo;
 
-public class SampleAgentRunner {
+    public ClassInfoVisitor() {
+        super(Opcodes.ASM5);
+    }
 
-    public static void premain(String agentArgs, Instrumentation inst) throws Exception {
-        // Run "SampleAgent" using "JAgentRunner". "SampleAgent" is loaded via created "InnerJarClassLoader".
-        JAgentRunner.runAgent("com.devexperts.jagent.sample.SampleAgent", inst, agentArgs,
-                InnerJarClassLoader.createForJars("asm-all.jar", "jagent-impl.jar", "transformer.jar"));
+    @Override
+    public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
+        classInfo = new ClassInfo(access, name, superName, interfaces);
+    }
+
+    public ClassInfo getClassInfo() {
+        return classInfo;
     }
 }

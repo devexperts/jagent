@@ -7,18 +7,18 @@ package com.devexperts.jagent;
  * Copyright (C) 2015 Devexperts, LLC
  * %%
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as
+ * it under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
  * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * GNU General Lesser Public License for more details.
  * 
- * You should have received a copy of the GNU General Public
+ * You should have received a copy of the GNU General Lesser Public
  * License along with this program.  If not, see
- * <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * <http://www.gnu.org/licenses/lgpl-3.0.html>.
  * #L%
  */
 
@@ -40,27 +40,20 @@ public abstract class JAgent {
     // Required parameters
     private final Instrumentation inst;
     private final List<ClassFileTransformer> transformers = new ArrayList<>();
+    private final Log log;
     private final String agentName;
     private final String version;
     // Instance variables
-    private Log log; // should be initialized in #go() method
     private boolean started = false;
     // Optional parameters
-    private Log.Level logLevel = Log.Level.INFO;
+    private boolean redefine = false;
     private boolean isVerboseRedefinition = false;
-    private String logFile = null;
 
-    public JAgent(Instrumentation inst, String agentName, String version) {
+    public JAgent(Instrumentation inst, String agentName, String version, Log log) {
         this.inst = inst;
+        this.log = log;
         this.agentName = agentName;
         this.version = version;
-    }
-
-    /**
-     * Returns {@link Log logger} for this agent.
-     */
-    public Log getLog() {
-        return log;
     }
 
     /**
@@ -84,14 +77,6 @@ public abstract class JAgent {
     }
 
     /**
-     * Set {@link Log.Level log level} for agent's logger.
-     */
-    public void setLogLevel(Log.Level logLevel) {
-        checkNotStarted();
-        this.logLevel = logLevel;
-    }
-
-    /**
      * Set to {@code true} to redefine classes one at a time instead of all together.
      */
     public void setIsVerboseRedefinition(boolean isVerboseRedefinition) {
@@ -100,11 +85,10 @@ public abstract class JAgent {
     }
 
     /**
-     * Sets log file name. All log messages will be written to this file.
+     * Set to {@code true} to enable classes redefinition.
      */
-    public void setLogFile(String logFile) {
-        checkNotStarted();
-        this.logFile = logFile;
+    public void setRedefineClasses(boolean redefine) {
+        this.redefine = redefine;
     }
 
     /**
@@ -113,14 +97,17 @@ public abstract class JAgent {
      */
     public void go() throws Exception {
         started = true;
-        log = new Log(agentName, logLevel, logFile);
-        log.info("Loading " + agentName + " " + version + "...");
-        // redefine all classes loader so far
+        log.info("Loading ", agentName, " ", version, "...");
+        if (redefine) {
+            log.info("Start redefining with ", agentName);
+            // redefine all classes loader so far
+            for (ClassFileTransformer transformer : transformers)
+                redefine(transformer);
+            log.info("Done redefining with ", agentName, ".");
+        }
         for (ClassFileTransformer transformer : transformers) {
-            redefine(transformer);
             inst.addTransformer(transformer);
         }
-        log.info("Done redefining with " + agentName + ".");
     }
 
     private void redefine(ClassFileTransformer transformer)
@@ -131,7 +118,7 @@ public abstract class JAgent {
         for (int pass = 1; ; pass++) {
             classes.addAll(Arrays.asList(inst.getAllLoadedClasses()));
             List<ClassDefinition> cdl = new ArrayList<>(classes.size());
-            log.debug("Redefining classes pass #" + pass + "...");
+            log.debug("Redefining classes pass #", pass, "...");
             for (Class clazz : classes) {
                 if (clazz.isArray())
                     continue;
@@ -148,10 +135,10 @@ public abstract class JAgent {
                             is.close();
                         }
                     } catch (IOException e) {
-                        log.warn("Failed to read class resource: " + name, e);
+                        log.warn("Failed to read class resource: ", name, e);
                     }
                 if (buf.isEmpty()) {
-                    log.warn("Cannot read class resource: " + name);
+                    log.warn("Cannot read class resource: ", name);
                     continue;
                 }
                 byte[] result = transformer.transform(
@@ -162,16 +149,16 @@ public abstract class JAgent {
             classes.clear();
             if (cdl.isEmpty())
                 break; // all classes were redefined
-            log.debug("Redefining classes pass #" + pass + "...");
+            log.debug("Redefining classes pass #", pass, "...");
 
             if (isVerboseRedefinition) {
                 for (ClassDefinition cd : cdl) {
                     String name = cd.getDefinitionClass().getName();
-                    log.debug("Redefining class " + name);
+                    log.debug("Redefining class ", name);
                     try {
                         inst.redefineClasses(cd);
                     } catch (Exception e) {
-                        log.error("Failed to redefine class " + name, e);
+                        log.error("Failed to redefine class ", name, e);
                     }
                 }
             } else {

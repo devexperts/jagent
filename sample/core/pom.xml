@@ -9,7 +9,7 @@
 
     <artifactId>core</artifactId>
     <name>Sample Core</name>
-    <description> Core of Sample agent. All classes in this module will be available
+    <description> Core of Sample agent. All classes from this module will be available
                   via system class loader at runtime. </description>
 
     <build>

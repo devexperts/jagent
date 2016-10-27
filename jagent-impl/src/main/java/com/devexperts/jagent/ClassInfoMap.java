@@ -1,10 +1,10 @@
-package com.devexperts.jagent.sample;
+package com.devexperts.jagent;
 
 /*
  * #%L
- * Sample Core
+ * JAgent Impl
  * %%
- * Copyright (C) 2015 Devexperts, LLC
+ * Copyright (C) 2015 - 2016 Devexperts, LLC
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,16 +22,18 @@ package com.devexperts.jagent.sample;
  * #L%
  */
 
-import com.devexperts.jagent.InnerJarClassLoader;
-import com.devexperts.jagent.JAgentRunner;
+import java.util.HashMap;
+import java.util.Map;
 
-import java.lang.instrument.Instrumentation;
+public class ClassInfoMap {
+    private final Map<String, ClassInfo> map = new HashMap<>();
 
-public class SampleAgentRunner {
-
-    public static void premain(String agentArgs, Instrumentation inst) throws Exception {
-        // Run "SampleAgent" using "JAgentRunner". "SampleAgent" is loaded via created "InnerJarClassLoader".
-        JAgentRunner.runAgent("com.devexperts.jagent.sample.SampleAgent", inst, agentArgs,
-                InnerJarClassLoader.createForJars("asm-all.jar", "jagent-impl.jar", "transformer.jar"));
+    public ClassInfo get(String internalClassName) {
+        return map.get(internalClassName);
     }
+
+    public void put(String internalClassName, ClassInfo classInfo) {
+        map.put(internalClassName, classInfo);
+    }
+
 }
