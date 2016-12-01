@@ -44,22 +44,30 @@ public class ClassInfo {
         this.internalInterfaceNames = internalInterfaceNames;
     }
 
-    String getInternalName() {
+    public String getInternalName() {
         return internalName;
     }
 
-    String getClassName() {
+    public String getClassName() {
         if (className == null)
             className = internalName.replace('/', '.');
         return className;
     }
 
-    boolean isInterface() {
+    public boolean isInterface() {
         return (access & Opcodes.ACC_INTERFACE) != 0;
     }
 
+    public String getInternalSuperName() {
+        return internalSuperName;
+    }
+
+    public String[] getInternalInterfaceNames() {
+        return internalInterfaceNames;
+    }
+
     // Returns null if not found or failed to load
-    ClassInfo getSuperclassInfo(ClassInfoCache ciCache, ClassLoader loader) {
+    public ClassInfo getSuperclassInfo(ClassInfoCache ciCache, ClassLoader loader) {
         if (internalSuperName == null)
             return null;
         if (superClassInfo == null)
@@ -68,7 +76,7 @@ public class ClassInfo {
     }
 
     // throws RuntimeException if not found or failed to load
-    ClassInfo getRequiredSuperclassInfo(ClassInfoCache ciCache, ClassLoader loader) {
+    public ClassInfo getRequiredSuperclassInfo(ClassInfoCache ciCache, ClassLoader loader) {
         if (internalSuperName == null)
             return null;
         if (superClassInfo == null)
@@ -77,7 +85,7 @@ public class ClassInfo {
     }
 
     // Returns null infos inside if not found or failed to load
-    ClassInfo[] getInterfaceInfos(ClassInfoCache ciCache, ClassLoader loader) {
+    public ClassInfo[] getInterfaceInfos(ClassInfoCache ciCache, ClassLoader loader) {
         if (interfaceInfos == null) {
             if (internalInterfaceNames == null || internalInterfaceNames.length == 0)
                 interfaceInfos = EMPTY_INFOS;
@@ -92,7 +100,7 @@ public class ClassInfo {
     }
 
     // throws RuntimeException if not found or failed to load
-    ClassInfo[] getRequiredInterfaceInfos(ClassInfoCache ciCache, ClassLoader loader) {
+    public ClassInfo[] getRequiredInterfaceInfos(ClassInfoCache ciCache, ClassLoader loader) {
         ClassInfo[] ii = getInterfaceInfos(ciCache, loader);
         for (int i = 0; i < ii.length; i++)
             if (ii[i] == null)
