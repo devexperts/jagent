@@ -38,7 +38,7 @@ public class ClassInfoCache {
         this.log = log;
     }
 
-    synchronized ClassInfo getClassInfo(String internalClassName, ClassLoader loader) {
+    public synchronized ClassInfo getClassInfo(String internalClassName, ClassLoader loader) {
         while (true) {
             ClassInfo classInfo = getOrInitClassInfoMap(loader).get(internalClassName);
             if (classInfo != null)
@@ -50,7 +50,7 @@ public class ClassInfoCache {
     }
 
     // Returns null if not found or failed to load
-    synchronized ClassInfo getOrBuildClassInfo(String internalClassName, ClassLoader loader) {
+    public synchronized ClassInfo getOrBuildClassInfo(String internalClassName, ClassLoader loader) {
         ClassInfo classInfo = getOrInitClassInfoMap(loader).get(internalClassName);
         if (classInfo != null)
             return classInfo;
