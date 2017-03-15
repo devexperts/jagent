@@ -31,6 +31,7 @@ public class ClassInfo {
 
     private final int access;
     private final int version;
+    private final String sourceFile;
     private final String internalName;
     private final String internalSuperName;
     private final String[] internalInterfaceNames;
@@ -40,9 +41,10 @@ public class ClassInfo {
     private ClassInfo superClassInfo;
     private ClassInfo[] interfaceInfos;
 
-    private ClassInfo(int access, int version, String internalName, String internalSuperName, String[] internalInterfaceNames) {
+    private ClassInfo(int access, int version, String sourceFile, String internalName, String internalSuperName, String[] internalInterfaceNames) {
         this.access = access;
         this.version = version;
+        this.sourceFile = sourceFile;
         this.internalName = Objects.requireNonNull(internalName);
         this.internalSuperName = Objects.requireNonNull(internalSuperName);
         this.internalInterfaceNames = Objects.requireNonNull(internalInterfaceNames);
@@ -60,6 +62,10 @@ public class ClassInfo {
         if (className == null)
             className = internalName.replace('/', '.');
         return className;
+    }
+
+    public String getSourceFile() {
+        return sourceFile;
     }
 
     public boolean isInterface() {
@@ -185,7 +191,7 @@ public class ClassInfo {
         }
 
         ClassInfo build() {
-            return new ClassInfo(access, version, internalName, internalSuperName, internalInterfaceNames);
+            return new ClassInfo(access, version, sourceFile, internalName, internalSuperName, internalInterfaceNames);
         }
     }
 
