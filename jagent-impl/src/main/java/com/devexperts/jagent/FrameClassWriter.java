@@ -24,14 +24,16 @@ package com.devexperts.jagent;
 
 import org.objectweb.asm.ClassWriter;
 
+import static org.objectweb.asm.Opcodes.V1_6;
+
 public class FrameClassWriter extends ClassWriter {
     private static final String OBJECT = "java/lang/Object";
 
     private final ClassLoader loader; // internalClassName -> ClassInfo
     private final ClassInfoCache ciCache;
 
-    public FrameClassWriter(ClassLoader loader, ClassInfoCache ciCache) {
-        super(ClassWriter.COMPUTE_FRAMES);
+    public FrameClassWriter(ClassLoader loader, ClassInfoCache ciCache, int classVersion) {
+        super(classVersion > V1_6 ? COMPUTE_FRAMES : COMPUTE_MAXS);
         this.loader = loader;
         this.ciCache = ciCache;
     }

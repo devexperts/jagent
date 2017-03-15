@@ -105,7 +105,7 @@ public class ClassInfoCache {
             } finally {
                 in.close();
             }
-            return visitor.getClassInfo();
+            return visitor.buildClassInfo();
         } catch (Throwable t) {
             log.error("Failed to build class info for ", internalClassName, " loaded by ", loader, t);
             return null;

@@ -24,10 +24,13 @@ package com.devexperts.jagent;
 
 import org.objectweb.asm.Opcodes;
 
+import java.util.Objects;
+
 public class ClassInfo {
     private static final ClassInfo[] EMPTY_INFOS = new ClassInfo[0];
 
     private final int access;
+    private final int version;
     private final String internalName;
     private final String internalSuperName;
     private final String[] internalInterfaceNames;
@@ -37,11 +40,16 @@ public class ClassInfo {
     private ClassInfo superClassInfo;
     private ClassInfo[] interfaceInfos;
 
-    ClassInfo(int access, String internalName, String internalSuperName, String[] internalInterfaceNames) {
+    private ClassInfo(int access, int version, String internalName, String internalSuperName, String[] internalInterfaceNames) {
         this.access = access;
-        this.internalName = internalName;
-        this.internalSuperName = internalSuperName;
-        this.internalInterfaceNames = internalInterfaceNames;
+        this.version = version;
+        this.internalName = Objects.requireNonNull(internalName);
+        this.internalSuperName = Objects.requireNonNull(internalSuperName);
+        this.internalInterfaceNames = Objects.requireNonNull(internalInterfaceNames);
+    }
+
+    public int getVersion() {
+        return version;
     }
 
     public String getInternalName() {
@@ -136,6 +144,49 @@ public class ClassInfo {
         return this == that
                 || that.isSubclassOf(this, ciCache, loader)
                 || that.implementsInterface(this, ciCache, loader);
+    }
+
+    static class Builder {
+        private int access;
+        private int version;
+        private String internalName;
+        private String internalSuperName;
+        private String[] internalInterfaceNames;
+        private String sourceFile;
+
+        Builder access(int access) {
+            this.access = access;
+            return this;
+        }
+
+        Builder version(int version) {
+            this.version = version;
+            return this;
+        }
+
+        Builder internalName(String internalName) {
+            this.internalName = internalName;
+            return this;
+        }
+
+        Builder internalSuperName(String internalSuperName) {
+            this.internalSuperName = internalSuperName;
+            return this;
+        }
+
+        Builder internalInterfaceNames(String[] internalInterfaceNames) {
+            this.internalInterfaceNames = internalInterfaceNames;
+            return this;
+        }
+
+        Builder sourceFile(String sourceFile) {
+            this.sourceFile = sourceFile;
+            return this;
+        }
+
+        ClassInfo build() {
+            return new ClassInfo(access, version, internalName, internalSuperName, internalInterfaceNames);
+        }
     }
 
 }

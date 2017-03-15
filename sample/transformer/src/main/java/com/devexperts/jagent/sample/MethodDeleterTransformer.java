@@ -51,8 +51,9 @@ class MethodDeleterTransformer implements ClassFileTransformer {
         ClassReader cr = new ClassReader(classfileBuffer);
         ClassInfoVisitor ciVisitor = new ClassInfoVisitor();
         cr.accept(ciVisitor, 0);
-        ciCache.getOrInitClassInfoMap(loader).put(className, ciVisitor.getClassInfo());
-        ClassWriter cw = new FrameClassWriter(loader, ciCache);
+        ClassInfo cInfo = ciVisitor.buildClassInfo();
+        ciCache.getOrInitClassInfoMap(loader).put(className, cInfo);
+        ClassWriter cw = new FrameClassWriter(loader, ciCache, cInfo.getVersion());
         ClassVisitor transformer = new ClassVisitor(ASM_API, cw) {
             @Override
             public MethodVisitor visitMethod(int access, final String mname, final String desc, String signature, String[] exceptions) {

@@ -26,7 +26,7 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Opcodes;
 
 public class ClassInfoVisitor extends ClassVisitor {
-    private ClassInfo classInfo;
+    private ClassInfo.Builder classInfoBuilder = new ClassInfo.Builder();
 
     public ClassInfoVisitor() {
         super(Opcodes.ASM5);
@@ -34,10 +34,15 @@ public class ClassInfoVisitor extends ClassVisitor {
 
     @Override
     public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
-        classInfo = new ClassInfo(access, name, superName, interfaces);
+        classInfoBuilder.version(version).access(access).internalName(name).internalSuperName(superName).internalInterfaceNames(interfaces);
     }
 
-    public ClassInfo getClassInfo() {
-        return classInfo;
+    @Override
+    public void visitSource(String source, String debug) {
+        classInfoBuilder.sourceFile(source);
+    }
+
+    public ClassInfo buildClassInfo() {
+        return classInfoBuilder.build();
     }
 }
