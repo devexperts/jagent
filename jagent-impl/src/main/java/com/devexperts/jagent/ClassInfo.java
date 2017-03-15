@@ -24,8 +24,6 @@ package com.devexperts.jagent;
 
 import org.objectweb.asm.Opcodes;
 
-import java.util.Objects;
-
 public class ClassInfo {
     private static final ClassInfo[] EMPTY_INFOS = new ClassInfo[0];
 
@@ -45,9 +43,9 @@ public class ClassInfo {
         this.access = access;
         this.version = version;
         this.sourceFile = sourceFile;
-        this.internalName = Objects.requireNonNull(internalName);
-        this.internalSuperName = Objects.requireNonNull(internalSuperName);
-        this.internalInterfaceNames = Objects.requireNonNull(internalInterfaceNames);
+        this.internalName = internalName;
+        this.internalSuperName = internalSuperName;
+        this.internalInterfaceNames = internalInterfaceNames;
     }
 
     public int getVersion() {
