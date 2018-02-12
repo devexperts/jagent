@@ -4,7 +4,7 @@
 
     <groupId>com.devexperts.jagent</groupId>
     <artifactId>jagent</artifactId>
-    <version>1.4-SNAPSHOT</version>
+    <version>1.4</version>
     <packaging>pom</packaging>
 
     <name>JAgent</name>
@@ -169,10 +169,35 @@
                             </execution>
                         </executions>
                     </plugin>
+                    <!-- Configuration for release -->
+                    <plugin>
+                        <groupId>com.devexperts.jgitflow</groupId>
+                        <artifactId>jgitflow-maven-plugin</artifactId>
+                        <version>1.0-m5.1-devexperts</version>
+                        <configuration>
+                            <autoVersionSubmodules>true</autoVersionSubmodules>
+                            <flowInitContext>
+                                <versionTagPrefix>jagent-</versionTagPrefix>
+                            </flowInitContext>
+                            <squash>true</squash>
+                            <scmCommentPrefix>[release] </scmCommentPrefix>
+                        </configuration>
+                    </plugin>
                 </plugins>
             </build>
         </profile>
     </profiles>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>bintray-devexperts</id>
+            <name>bintray-plugins</name>
+            <url>http://dl.bintray.com/devexperts/Maven</url>
+        </pluginRepository>
+    </pluginRepositories>
 
     <scm>
         <connection>scm:git:https://stash.in.devexperts.com/scm/dxlab/jagent.git</connection>

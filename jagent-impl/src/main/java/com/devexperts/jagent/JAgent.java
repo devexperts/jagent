@@ -115,6 +115,8 @@ public abstract class JAgent {
         ArrayList<Class> classes = new ArrayList<>();
         HashSet<Class> done = new HashSet<>();
         FastByteBuffer buf = new FastByteBuffer();
+        CachingClassFileTransformer ourTransformer = transformer instanceof CachingClassFileTransformer ?
+            (CachingClassFileTransformer) transformer : null;
         for (int pass = 1; ; pass++) {
             classes.addAll(Arrays.asList(inst.getAllLoadedClasses()));
             List<ClassDefinition> cdl = new ArrayList<>(classes.size());
@@ -125,6 +127,8 @@ public abstract class JAgent {
                 if (!done.add(clazz))
                     continue;
                 String name = clazz.getName().replace('.', '/');
+                if (ourTransformer != null && !ourTransformer.processClass(name, clazz.getClassLoader()))
+                    continue;
                 InputStream is = clazz.getResourceAsStream("/" + name + ".class");
                 buf.clear();
                 if (is != null)

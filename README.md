@@ -1,5 +1,8 @@
 JAgent
 ======
+
+[ ![Download](https://api.bintray.com/packages/devexperts/Maven/jagent/images/download.svg) ](https://bintray.com/devexperts/Maven/jagent/_latestVersion)
+
 **JAgent** framework helps you to implement java agents. 
 It has some extra functionality instead of standard Java's API. 
 

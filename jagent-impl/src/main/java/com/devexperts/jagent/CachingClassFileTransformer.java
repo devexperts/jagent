@@ -99,8 +99,10 @@ public abstract class CachingClassFileTransformer implements ClassFileTransforme
         if (dumpDir == null)
             return;
         try {
-            Path classPath = Paths.get(dumpDir, className + "#loaderHashCode=" + (loader != null ? loader.hashCode() : null));
-            Files.createDirectories(classPath.getParent());
+            Path classPath = Paths.get(dumpDir, className + "#loaderHashCode="
+                + (loader != null ? loader.hashCode() : null) + ".class");
+            if (classPath.getParent() != null)
+                Files.createDirectories(classPath.getParent());
             Files.write(classPath, classfileBuffer);
             log.debug("Dump class ", className, " loaded by ", loader, " to ", classPath);
         } catch (Exception e) {
